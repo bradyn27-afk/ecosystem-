@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: driveline-hq
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 30
+    healthCheckPath: /healthz
+    autoDeployTrigger: off
+    envVars:
+      - key: PUBLIC_DEPLOYMENT
+        value: "1"
+      - key: DRIVELINE_DATA_DIR
+        value: /var/data/driveline
+      - key: DRIVELINE_USERNAME
+        value: owner
+      - key: DRIVELINE_PASSWORD
+        sync: false
+    disk:
+      name: driveline-records
+      mountPath: /var/data
+      sizeGB: 1
